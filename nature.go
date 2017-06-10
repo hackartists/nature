@@ -97,11 +97,16 @@ func (n *Nature) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if h.IsPreRoute && n.preRouteErrorHandler != nil {
 		isPass, preResult = n.preRouteHandler(w, r)
+	} else {
+		h.Handler(w, r)
+		return
 	}
 
 	if isPass {
 		h.Handler(w, r)
 	} else {
-		n.preRouteErrorHandler(w, r, preResult)
+		if n.preRouteErrorHandler != nil {
+			n.preRouteErrorHandler(w, r, preResult)
+		}
 	}
 }
