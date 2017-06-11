@@ -43,3 +43,7 @@ func ConfigFromYaml(filename string, config interface{}) interface{} {
 
 	return r
 }
+
+func Parameters(c NatureParamContext, w http.ResponseWriter, r *http.Request) ([]string, error) {
+
+}

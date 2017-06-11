@@ -27,6 +27,11 @@ const (
 	Debug
 )
 
+const (
+	Default ParamOperation = iota
+	Error
+)
+
 type (
 	URIHandler            func(*NatureContext, http.ResponseWriter, *http.Request)
 	LogHandler            func(*NatureLogContext, http.ResponseWriter, *http.Request)
@@ -43,6 +48,7 @@ type (
 	LogData         map[string]string
 	GlobalVariables map[string]interface{}
 	GlobalConfig    interface{}
+	ParamOperation  uint
 )
 
 type (
@@ -87,5 +93,11 @@ type (
 		sess            *session.Manager
 		GlobalVariables GlobalVariables
 		GlobalConfig    GlobalConfig
+	}
+
+	NatureParamContext struct {
+		Key    string
+		Action ParamOperation
+		Value  string
 	}
 )
