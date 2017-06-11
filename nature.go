@@ -165,11 +165,9 @@ func (n *Nature) EmitLog(l *NatureLogContext, w http.ResponseWriter, r *http.Req
 }
 
 func (n *Nature) EmitRouteError(w http.ResponseWriter, r *http.Request) {
-	go func() {
-		if n.routeErrorHandler != nil {
-			n.routeErrorHandler(w, r)
-		}
-	}()
+	if n.routeErrorHandler != nil {
+		n.routeErrorHandler(w, r)
+	}
 }
 
 func (n *Nature) EmitPreRoute(c *NatureContext, w http.ResponseWriter, r *http.Request) (bool, interface{}) {
@@ -180,9 +178,7 @@ func (n *Nature) EmitPreRoute(c *NatureContext, w http.ResponseWriter, r *http.R
 }
 
 func (n *Nature) EmitPreRouteError(w http.ResponseWriter, r *http.Request, p interface{}) {
-	go func() {
-		if n.preRouteErrorHandler != nil {
-			n.preRouteErrorHandler(w, r, p)
-		}
-	}()
+	if n.preRouteErrorHandler != nil {
+		n.preRouteErrorHandler(w, r, p)
+	}
 }

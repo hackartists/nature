@@ -19,11 +19,9 @@ func (n *NatureContext) EmitLog(l *NatureLogContext, w http.ResponseWriter, r *h
 }
 
 func (n *NatureContext) EmitUniversalError(c *NatureErrorContext, w http.ResponseWriter, r *http.Request) {
-	go func() {
-		if n.universalErrorHandler != nil {
-			n.universalErrorHandler(c, w, r)
-		}
-	}()
+	if n.universalErrorHandler != nil {
+		n.universalErrorHandler(c, w, r)
+	}
 }
 
 func (n *NatureContext) AddGlobalVariable(key string, value interface{}) {
