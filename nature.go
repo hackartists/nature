@@ -106,7 +106,7 @@ func (n *Nature) SetSubRouter(prefix string, r interface{}, preroute bool) {
 				path = strings.ToLower(prefix)
 			}
 
-			handleFunc := t.Method(i).Interface().(URIHandler)
+			handleFunc := t.Method(i).Interface().(func(*NatureContext, http.ResponseWriter, *http.Request) error)
 
 			switch method {
 			case GET:
