@@ -29,11 +29,12 @@ const (
 
 const (
 	Default ParamOperation = iota
-	Error
+	RequestError
 )
 
 type (
-	URIHandler            func(*NatureContext, http.ResponseWriter, *http.Request)
+	URIHandler            func(*NatureContext, http.ResponseWriter, *http.Request) error
+	StaticRouteHandler    func(http.ResponseWriter, *http.Request)
 	LogHandler            func(*NatureLogContext, http.ResponseWriter, *http.Request)
 	RouteErrorHandler     func(http.ResponseWriter, *http.Request)
 	PreRouteErrorHandler  func(http.ResponseWriter, *http.Request, interface{})
@@ -70,20 +71,14 @@ type (
 		IsPreRoute bool
 	}
 
+	StaticRoute struct {
+		Handler StaticRouteHandler
+		Prefix  string
+	}
+
 	// SubRoute is a interface for URI handlers of a specific prefixed path URI.
 	SubRouter interface {
 		Init(n *Nature)
-	}
-
-	Nature struct {
-		Router Router
-		Server *http.Server
-
-		preRouteErrorHandler PreRouteErrorHandler
-		preRouteHandler      PreRouteHandler
-		routeErrorHandler    RouteErrorHandler
-
-		Context *NatureContext
 	}
 
 	NatureContext struct {

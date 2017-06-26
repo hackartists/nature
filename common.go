@@ -30,8 +30,8 @@ func Redirect(w http.ResponseWriter, r *http.Request, uri string) {
 // ConfigFromYaml loads configuration from YAML. The first argument is the
 // name of configuration file and another argument is the pointer type of
 // config variable.
-func ConfigFromYaml(filename string, config interface{}) interface{} {
-	c, e := ioutil.ReadFile(file)
+func ConfigFromYaml(filename string, r interface{}) interface{} {
+	c, e := ioutil.ReadFile(filename)
 
 	err.Panic(e, "LoadConfig")
 
@@ -44,6 +44,6 @@ func ConfigFromYaml(filename string, config interface{}) interface{} {
 	return r
 }
 
-func Parameters(c NatureParamContext, w http.ResponseWriter, r *http.Request) ([]string, error) {
+// func Parameters(c NatureParamContext, w http.ResponseWriter, r *http.Request) ([]string, error) {
 
-}
+// }

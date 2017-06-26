@@ -11,16 +11,35 @@ import (
 	session "gopkg.in/session.v1"
 )
 
+type Nature struct {
+	Router       Router
+	StaticRouter []StaticRoute
+	Server       *http.Server
+
+	preRouteErrorHandler PreRouteErrorHandler
+	preRouteHandler      PreRouteHandler
+	routeErrorHandler    RouteErrorHandler
+
+	Context *NatureContext
+}
+
 func New() (n *Nature) {
 	n = &Nature{
-		Server:  new(http.Server),
-		Router:  make(Router),
-		Context: new(NatureContext),
+		Server:       new(http.Server),
+		Router:       make(Router),
+		Context:      new(NatureContext),
+		StaticRouter: make([]StaticRoute, 0),
 	}
 	n.Context.GlobalVariables = make(GlobalVariables)
 	n.Server.Handler = n
 
 	return n
+}
+
+func (n *Nature) Static(prefix, filepath string) {
+	n.StaticRouter = append(n.StaticRouter, StaticRoute{
+		Handler: http.StripPrefix(prefix+"/", http.FileServer(http.Dir(filepath))).ServeHTTP,
+		Prefix:  prefix})
 }
 
 func (n *Nature) Get(path string, h URIHandler, isPreRoute bool) {
@@ -87,7 +106,7 @@ func (n *Nature) SetSubRouter(prefix string, r interface{}, preroute bool) {
 				path = strings.ToLower(prefix)
 			}
 
-			handleFunc := t.Method(i).Interface().(func(*NatureContext, http.ResponseWriter, *http.Request))
+			handleFunc := t.Method(i).Interface().(URIHandler)
 
 			switch method {
 			case GET:
@@ -139,6 +158,12 @@ func (n *Nature) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h := n.Router[r.Method+r.URL.Path]
 
 	if h == nil {
+		for _, sr := range n.StaticRouter {
+			if strings.HasPrefix(r.URL.Path, sr.Prefix) {
+				sr.Handler(w, r)
+				return
+			}
+		}
 		n.EmitRouteError(w, r)
 		return
 	}

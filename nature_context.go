@@ -1,6 +1,8 @@
 package nature
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
 
 	session "gopkg.in/session.v1"
@@ -34,4 +36,17 @@ func (n *NatureContext) GetGlobalVariable(key string) interface{} {
 
 func (n *NatureContext) Session() *session.Manager {
 	return n.sess
+}
+
+func (n *NatureContext) WriteJSON(w http.ResponseWriter, i interface{}) error {
+	return json.NewEncoder(w).Encode(i)
+}
+
+func (n *NatureContext) ReadJSON(r *http.Request, i interface{}) error {
+	if r.Body != nil {
+		err := json.NewDecoder(r.Body).Decode(&i)
+		return err
+	}
+
+	return errors.New("No request body")
 }
