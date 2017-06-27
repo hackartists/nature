@@ -30,7 +30,7 @@ func (n *NatureContext) AddGlobalVariable(key string, value interface{}) {
 	n.GlobalVariables[key] = value
 }
 
-func (n *NatureContext) GetGlobalVariable(key string) interface{} {
+func (n *NatureContext) GlobalVariable(key string) interface{} {
 	return n.GlobalVariables[key]
 }
 
