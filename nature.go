@@ -133,6 +133,11 @@ func (n *Nature) SetSubRouter(prefix string, r interface{}, preroute bool) {
 
 func (n *Nature) StartServer(addr string) error {
 	n.Server.Addr = addr
+	n.EmitLog(&NatureLogContext{Flag: ServerStarting, Level: Info,
+		Data: map[string]string{
+			"port": addr,
+		},
+	}, nil, nil)
 	return n.Server.ListenAndServe()
 }
 

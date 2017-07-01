@@ -17,6 +17,7 @@ const (
 const (
 	IncommingPacket LogFlag = iota
 	RegisterRoute
+	ServerStarting
 )
 
 //LogLevel
