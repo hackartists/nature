@@ -34,6 +34,7 @@ const (
 // Errors
 const (
 	ParameterError int = iota
+	UnexpectedError
 )
 
 type (

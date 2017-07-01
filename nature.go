@@ -161,9 +161,19 @@ func (n *Nature) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	n.EmitLog(&NatureLogContext{Flag: IncommingPacket, Level: Info}, w, r)
 
 	defer func() {
+		defer func() {
+			if err := recover(); err != nil {
+				w.Write([]byte("Server error"))
+			}
+		}()
+
 		if err := recover(); err != nil {
-			e := err.(NatureErrorContext)
-			n.Context.EmitUniversalError(&e, w, r)
+			e, ok := err.(NatureErrorContext)
+			if ok {
+				n.Context.EmitUniversalError(&e, w, r)
+			} else {
+				n.Context.EmitUniversalError(&NatureErrorContext{ErrorCode: UnexpectedError, ErrorMessage: "Unexpected error"}, w, r)
+			}
 		}
 	}()
 	h := n.Router[r.Method+r.URL.Path]
