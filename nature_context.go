@@ -60,15 +60,27 @@ func (n *NatureContext) ReadJSON(r *http.Request, i interface{}) error {
 	return errors.New("No request body")
 }
 
-func (n *NatureContext) Parameters(r *http.Request, params ...NatureParamContext) []string {
+// Parameters() parses HTTP parameters. Before using this, NatureParamContext has to be defined.
+// If one of mandatory parameters is missed, UniversalErrorHandler will be called instead of
+// continuing the API handle function.
+func (n *NatureContext) Parameters(r *http.Request, params []NatureParamContext, out ...*string) []string {
 	res := []string{}
+	l := len(out)
 
-	for _, p := range params {
+	for i, p := range params {
 		d := r.FormValue(p.Key)
 		if d != "" {
 			res = append(res, d)
+			if l > i {
+				*out[i] = d
+			}
+		} else if p.Policy == Optional {
+			res = append(res, p.Default)
+			if l > i {
+				*out[i] = p.Default
+			}
 		} else if p.Policy == Mandatory {
-			panic(ParameterError)
+			panic(NatureErrorContext{ParameterError, p.Default})
 		}
 	}
 

@@ -162,10 +162,8 @@ func (n *Nature) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	defer func() {
 		if err := recover(); err != nil {
-			code := err.(int)
-			n.Context.EmitUniversalError(&NatureErrorContext{
-				ErrorCode: code,
-			}, w, r)
+			e := err.(NatureErrorContext)
+			n.Context.EmitUniversalError(&e, w, r)
 		}
 	}()
 	h := n.Router[r.Method+r.URL.Path]

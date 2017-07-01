@@ -58,7 +58,8 @@ type (
 
 type (
 	NatureErrorContext struct {
-		ErrorCode int
+		ErrorCode    int
+		ErrorMessage string
 	}
 
 	NatureLogContext struct {
@@ -84,8 +85,14 @@ type (
 		Init(n *Nature)
 	}
 
+	// NatureParamContext describes a HTTP parameter that will be parsed from Parameters(),
+	// which is a member function of NatureContext. Key is a name of parameter and Policy
+	// means constraint of the parameter, namely Mandatory or Optional. Default can be used
+	// as Default value when Policy was set as Optional. Otherwise, Default describes
+	// error message where Policy was set as Mandatory.
 	NatureParamContext struct {
-		Key    string
-		Policy ParamOperation
+		Key     string
+		Policy  ParamOperation
+		Default string
 	}
 )
