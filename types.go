@@ -2,8 +2,6 @@ package nature
 
 import (
 	"net/http"
-
-	session "gopkg.in/session.v1"
 )
 
 // Supported methods
@@ -29,8 +27,13 @@ const (
 )
 
 const (
-	Default ParamOperation = iota
-	RequestError
+	Mandatory ParamOperation = iota
+	Optional
+)
+
+// Errors
+const (
+	ParameterError int = iota
 )
 
 type (
@@ -55,8 +58,7 @@ type (
 
 type (
 	NatureErrorContext struct {
-		Error error
-		Code  int
+		ErrorCode int
 	}
 
 	NatureLogContext struct {
@@ -82,18 +84,8 @@ type (
 		Init(n *Nature)
 	}
 
-	NatureContext struct {
-		logHandler            LogHandler
-		universalErrorHandler UniversalErrorHandler
-
-		sess            *session.Manager
-		GlobalVariables GlobalVariables
-		GlobalConfig    GlobalConfig
-	}
-
 	NatureParamContext struct {
 		Key    string
-		Action ParamOperation
-		Value  string
+		Policy ParamOperation
 	}
 )

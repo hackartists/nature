@@ -160,6 +160,14 @@ func (n *Nature) SetPreRouteHandler(h PreRouteHandler) {
 func (n *Nature) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	n.EmitLog(&NatureLogContext{Flag: IncommingPacket, Level: Info}, w, r)
 
+	defer func() {
+		if err := recover(); err != nil {
+			code := err.(int)
+			n.Context.EmitUniversalError(&NatureErrorContext{
+				ErrorCode: code,
+			}, w, r)
+		}
+	}()
 	h := n.Router[r.Method+r.URL.Path]
 
 	if h == nil {

@@ -8,6 +8,15 @@ import (
 	session "gopkg.in/session.v1"
 )
 
+type NatureContext struct {
+	logHandler            LogHandler
+	universalErrorHandler UniversalErrorHandler
+
+	sess            *session.Manager
+	GlobalVariables GlobalVariables
+	GlobalConfig    GlobalConfig
+}
+
 func (n *NatureContext) SetLogHandler(h LogHandler) {
 	n.logHandler = h
 }
@@ -49,4 +58,19 @@ func (n *NatureContext) ReadJSON(r *http.Request, i interface{}) error {
 	}
 
 	return errors.New("No request body")
+}
+
+func (n *NatureContext) Parameters(r *http.Request, params ...NatureParamContext) []string {
+	res := []string{}
+
+	for _, p := range params {
+		d := r.FormValue(p.Key)
+		if d != "" {
+			res = append(res, d)
+		} else if p.Policy == Mandatory {
+			panic(ParameterError)
+		}
+	}
+
+	return res
 }
